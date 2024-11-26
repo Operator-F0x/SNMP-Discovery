@@ -1,9 +1,11 @@
 import asyncio
 import os
 from datetime import datetime
+
 from pysnmp.hlapi.v1arch.asyncio import *
 from pysnmp.proto.rfc1905 import errorStatus as pysnmpErrorStatus
 from pysnmp.smi import builder, view, compiler
+# from tests.agent_context import AGENT_PORT, AgentContextManager
 
 getenv = os.getenv
 SNMP_COMMUNITY = getenv("SNMP_COMMUNITY")
