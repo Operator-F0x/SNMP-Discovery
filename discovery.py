@@ -50,3 +50,5 @@ def cast(value):
             except (ValueError, TypeError):
                 pass
     return value
+
+print(get('192.168.62.235', ['1.3.6.1.2.1.1.5.0'], hlapi.CommunityData('wda')))
