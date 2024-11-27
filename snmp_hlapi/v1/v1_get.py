@@ -22,9 +22,11 @@ async def v1_get():
             snmpDispatcher,
             CommunityData(communityName=SNMP_COMMUNITY, mpModel=0),
             await UdpTransportTarget.create((SNMP_HOST, SNMP_PORT)),
-            (ObjectType(ObjectIdentity(SNMP_OID))), None),
+            ObjectType(ObjectIdentity(SNMP_OID, "sysDescr", 0))
+        )
 
         errorIndication, errorStatus, errorIndex, varBinds = iterator
+        print(errorIndication, errorStatus, errorIndex, varBinds)
 
         assert errorIndication is None
         assert errorStatus == 0
