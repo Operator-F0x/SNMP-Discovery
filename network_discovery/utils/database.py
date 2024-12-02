@@ -35,14 +35,12 @@ def get_host_name_by_address(host_address):
             host="10.230.230.200", database="centreon", user="root", password="snms"
         )
         if connection.is_connected():
+            print("Connected to MySQL database.")
             cursor = connection.cursor()
             query = "SELECT host_name FROM host WHERE host_address = %s"
             cursor.execute(query, (host_address,))
             result = cursor.fetchone()
-            if result:
-                return result[0]
-            else:
-                return host_address
+            return result[0] if result else host_address
     except Error as e:
         print(f"Error while connecting to MySQL: {e}")
         return None
@@ -50,3 +48,4 @@ def get_host_name_by_address(host_address):
         if connection.is_connected():
             cursor.close()
             connection.close()
+            print("MySQL connection closed.")
