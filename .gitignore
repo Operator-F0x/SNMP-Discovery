@@ -1,2 +1,12 @@
-venv
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+
+# Ignore virtual environment directories
+venv/
+.env/
+
+# Ignore other files and directories
+*.log
+*.tmp
 network_discovery/network_discovery.py
