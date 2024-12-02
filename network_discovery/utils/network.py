@@ -71,8 +71,7 @@ def ping_ip(ip_str):
     try:
         ipaddress.ip_address(ip_str)
         response = os.system(f"ping -c 1 -W 1 {ip_str} > /dev/null 2>&1")
-        if response == 0:
-            return ip_str
+        return ip_str if response == 0 else None
     except ValueError as e:
         print(f"Invalid IP address '{ip_str}': {e}")
     return None
@@ -120,8 +119,7 @@ def get_ips_from_subnets(subnets):
     for subnet in subnets:
         try:
             net = ipaddress.ip_network(subnet)
-            for ip in net.hosts():
-                all_ips.append(str(ip))
+            all_ips.extend(str(ip) for ip in net.hosts())
         except ValueError as e:
             print(f"Invalid subnet {subnet}: {e}")
     return all_ips
