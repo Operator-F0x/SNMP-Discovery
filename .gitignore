@@ -1,3 +1,2 @@
 venv
-.env
 network_discovery/network_discovery.py
