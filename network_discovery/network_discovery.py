@@ -2,7 +2,7 @@ import ipaddress
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
-from pysnmp.hlapi import *
+from pysnmp.hlapi import get_cmd as getCmd, nextCmd, SnmpEngine, UsmUserData, UdpTransportTarget, ContextData, ObjectType, ObjectIdentity, usmHMACSHAAuthProtocol, usmAesCfb128Protocol
 from pysnmp import debug
 from screeninfo import get_monitors
 import concurrent.futures
