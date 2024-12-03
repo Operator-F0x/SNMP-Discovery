@@ -11,4 +11,4 @@ venv/
 .vscode/
 *.tmp
 network_discovery/network_discovery.py
-network_discovery/main.py
+# network_discovery/main.py
