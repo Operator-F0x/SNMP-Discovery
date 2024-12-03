@@ -1,5 +1,6 @@
 import ipaddress
-import os
+import subprocess
+import platform
 import socket
 import concurrent.futures
 
@@ -69,9 +70,24 @@ def ping_ip(ip_str):
     None
     """
     try:
+        # Check if the IP is valid
         ipaddress.ip_address(ip_str)
-        response = os.system(f"ping -c 1 -W 1 {ip_str} > /dev/null 2>&1")
-        return ip_str if response == 0 else None
+
+        # Determine the operating system
+        system = platform.system()
+
+        # Set the ping command based on the operating system
+        if system == "Windows":
+            command = ["ping", "-n", "1", "-w", "1000", ip_str]
+        else:
+            command = ["ping", "-c", "1", "-W", "1", ip_str]
+
+        # Execute the ping command
+        response = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+        # Return the IP address if the ping was successful
+        return ip_str if response.returncode == 0 else None
+
     except ValueError as e:
         print(f"Invalid IP address '{ip_str}': {e}")
     return None
