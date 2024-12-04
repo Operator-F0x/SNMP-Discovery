@@ -1,5 +1,7 @@
 import mysql.connector
 from mysql.connector import Error
+import os
+from utils.network import save_local_ip_to_env
 
 def get_host_name_by_address(host_address):
     """
@@ -31,9 +33,19 @@ def get_host_name_by_address(host_address):
     mysql.connector.Error: If there is an error while connecting to the MySQL database.
     """
     try:
+        db_host = os.getenv('DB_HOST')
+        db_name = os.getenv('DB_NAME')
+        db_user = os.getenv('DB_USER')
+        db_password = os.getenv('DB_PASSWORD')
+
+        # Establish the database connection
         connection = mysql.connector.connect(
-            host="10.230.230.200", database="centreon", user="root", password="snms"
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password
         )
+        
         if connection.is_connected():
             print("Connected to MySQL database.")
             cursor = connection.cursor()
