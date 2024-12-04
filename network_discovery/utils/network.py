@@ -4,6 +4,25 @@ import platform
 import socket
 import concurrent.futures
 
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception as e:
+        print(f"Error getting local IP: {e}")
+        return None
+
+def save_local_ip_to_env():
+    local_ip = get_local_ip()
+    if local_ip:
+        with open('.env', 'a') as env_file:
+            env_file.write(f'\nDB_HOST={local_ip}\n')
+    else:
+        print("Failed to retrieve local IP address.")
+
 def get_dns_hostname(ip):
     """
     Get the DNS hostname for a given IP address.
