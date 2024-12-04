@@ -1,11 +1,12 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from utils.network import get_dns_hostname
+from utils.network import get_dns_hostname, save_local_ip_to_env
 from utils.snmp import get_snmp_neighbors, get_local_ports
 from utils.database import get_host_name_by_address
 from utils.screen import get_screen_size
 
-def build_topology(active_ips, user, auth_key, priv_key, auth_protocol, priv_protocol):
+
+def build_topology(active_ips, version, community=None, user=None, auth_key=None, priv_key=None, auth_protocol=None, priv_protocol=None):
     """
     Builds a network topology graph using SNMP data.
 
@@ -15,23 +16,26 @@ def build_topology(active_ips, user, auth_key, priv_key, auth_protocol, priv_pro
 
     Parameters:
     active_ips (list): A list of IP addresses of active devices to be included in the topology.
-    user (str): The SNMPv3 username.
-    auth_key (str): The SNMPv3 authentication key.
-    priv_key (str): The SNMPv3 privacy key.
-    auth_protocol (str): The SNMPv3 authentication protocol (e.g., 'MD5', 'SHA').
-    priv_protocol (str): The SNMPv3 privacy protocol (e.g., 'DES', 'AES').
+    version (int): The SNMP version to use (1, 2, or 3).
+    community (str, optional): The community string for SNMPv1 and SNMPv2c.
+    user (str, optional): The SNMPv3 username.
+    auth_key (str, optional): The SNMPv3 authentication key.
+    priv_key (str, optional): The SNMPv3 privacy key.
+    auth_protocol (str, optional): The SNMPv3 authentication protocol (e.g., 'MD5', 'SHA').
+    priv_protocol (str, optional): The SNMPv3 privacy protocol (e.g., 'DES', 'AES').
 
     Returns:
     networkx.Graph: A graph object representing the network topology.
 
     Example:
     >>> active_ips = ['192.168.1.1', '192.168.1.2']
+    >>> version = 3
     >>> user = 'snmpuser'
     >>> auth_key = 'authkey'
     >>> priv_key = 'privkey'
     >>> auth_protocol = 'SHA'
     >>> priv_protocol = 'AES'
-    >>> G = build_topology(active_ips, user, auth_key, priv_key, auth_protocol, priv_protocol)
+    >>> G = build_topology(active_ips, version, community=None, user=user, auth_key=auth_key, priv_key=priv_key, auth_protocol=auth_protocol, priv_protocol=priv_protocol)
     >>> print(G.nodes)
     ['Device1', 'Device2']
     >>> print(G.edges)
@@ -43,17 +47,18 @@ def build_topology(active_ips, user, auth_key, priv_key, auth_protocol, priv_pro
       functions must be defined elsewhere in your codebase.
     """
     G = nx.Graph()
+    save_local_ip_to_env()
     for ip in active_ips:
         dns_host_name = get_dns_hostname(ip)
         print("DNS HOST NAME: " + dns_host_name)
         remote_port_array = []
         local_port_array = []
         remote_device_array = []
-        local_ports = get_local_ports(ip, user, auth_key, priv_key, auth_protocol, priv_protocol)
+        local_ports = get_local_ports(ip, version, community, user, auth_key, priv_key, auth_protocol, priv_protocol)
         device_name = get_host_name_by_address(ip)
         G.add_node(device_name, label=device_name)
         print(ip + " " + device_name)
-        neighbors = get_snmp_neighbors(ip, user, auth_key, priv_key, auth_protocol, priv_protocol)
+        neighbors = get_snmp_neighbors(ip, version, community, user, auth_key, priv_key, auth_protocol, priv_protocol)
         for oid, value in neighbors:
             local_device = device_name
             if oid:
